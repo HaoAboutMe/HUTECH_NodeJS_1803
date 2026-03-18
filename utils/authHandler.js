@@ -14,7 +14,9 @@ module.exports = {
             // Hỗ trợ cả trường hợp có Bearer hoặc không có Bearer
             let token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
 
-            let result = jwt.verify(token, "secret")
+            const fs = require('fs');
+            let pubK = fs.readFileSync('publicKey.pem');
+            let result = jwt.verify(token, pubK, { algorithms: ['RS256'] })
             if (result.exp * 1000 < Date.now()) {
                 res.status(401).send({
                     message: "Token đã hết hạn, vui lòng đăng nhập lại"
