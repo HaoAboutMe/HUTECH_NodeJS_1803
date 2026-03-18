@@ -47,8 +47,11 @@ module.exports = {
       throw new Error("Mật khẩu cũ không chính xác");
     }
 
-    user.password = newPassword;
-    await user.save();
+    // Dùng findByIdAndUpdate với plain text để pre('findOneAndUpdate') hook
+    // trong schema tự hash đúng 1 lần (tránh double-hash)
+    await userModel.findByIdAndUpdate(userId, {
+      password: newPassword,
+    });
     return user;
   },
 };
